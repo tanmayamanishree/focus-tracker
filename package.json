@@ -1,0 +1,9 @@
+{
+  "name": "focus-tracker",
+  "version": "1.0.0",
+  "description": "A focus tracking application built with HTML, CSS, and JavaScript",
+  "scripts": {
+    "dev": "npx serve .",
+    "start": "npx serve ."
+  }
+}
