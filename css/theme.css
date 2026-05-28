@@ -1,0 +1,74 @@
+/* ============================================
+   THEME TOKENS
+   Adjust here to restyle the whole app.
+   ============================================ */
+
+:root {
+  /* Backgrounds (dark mode) */
+  --bg-0: #0e1014;          /* page background */
+  --bg-1: #161920;          /* panels, sidebar */
+  --bg-2: #1d2129;          /* hover surfaces */
+  --bg-3: #262b35;          /* active surfaces */
+
+  /* Lines */
+  --line: #2d333f;
+  --line-soft: #232831;
+
+  /* Text */
+  --ink-0: #e8e6e1;         /* primary */
+  --ink-1: #b8b5ad;         /* secondary */
+  --ink-2: #7d7a72;         /* tertiary */
+  --ink-3: #4d4a44;         /* hint */
+
+  /* Accent (warm amber) */
+  --accent: #d4a574;
+  --accent-dim: #8a6b4a;
+  --accent-glow: rgba(212, 165, 116, 0.12);
+
+  /* Semantic */
+  --green: #7fa67f;
+  --red: #c47c7c;
+  --blue: #7c9fc4;
+
+  /* Fonts */
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter Tight', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Radii */
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+
+  /* Shadows */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-2: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* Reset */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  background: var(--bg-0);
+  color: var(--ink-0);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+::selection { background: var(--accent-glow); color: var(--accent); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--line); }
+
+input, textarea, button {
+  font-family: inherit;
+  color: inherit;
+}

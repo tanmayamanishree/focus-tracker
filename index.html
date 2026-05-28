@@ -1,31 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Focus Tracker</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=JetBrains+Mono:wght@400;500&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/theme.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/components.css" />
 </head>
 <body>
-  <div class="container">
-    <header class="header">
-      <h1>Focus Tracker</h1>
-      <p class="subtitle">Track your focus and boost productivity</p>
-    </header>
+  <div class="app">
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="dot"></span>
+        <span>Notebook</span>
+      </div>
 
-    <main class="main">
-      <section class="welcome-card">
-        <h2>Welcome to Focus Tracker</h2>
-        <p>Start building your focus tracking application here.</p>
-        <button id="get-started-btn" class="btn btn-primary">Get Started</button>
-      </section>
-    </main>
+      <nav id="nav">
+        <div class="nav-item" data-page="focus">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor"/>
+          </svg>
+          <span>Focus</span>
+        </div>
+        <div class="nav-item" data-page="projects">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M3 7h6l2 2h10v11H3z"/>
+          </svg>
+          <span>Projects</span>
+        </div>
+        <div class="nav-item" data-page="diary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 4h13a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"/>
+            <path d="M4 4v13a3 3 0 0 0 3 3"/>
+          </svg>
+          <span>Weekly Diary</span>
+        </div>
+      </nav>
 
-    <footer class="footer">
-      <p>&copy; 2026 Focus Tracker. All rights reserved.</p>
-    </footer>
+      <div class="nav-spacer"></div>
+      <div class="nav-footer">v0.1</div>
+    </aside>
+
+    <!-- ============ PAGE CONTAINERS ============ -->
+    <!-- Pages render their own markup into these via JS -->
+    <main class="page" id="page-focus"></main>
+    <main class="page" id="page-projects"></main>
+    <main class="page" id="page-diary"></main>
   </div>
 
-  <script src="script.js"></script>
+  <!-- jsPDF for diary export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <!-- App scripts (order matters) -->
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/router.js"></script>
+  <script src="js/pages/focus.js"></script>
+  <script src="js/pages/projects.js"></script>
+  <script src="js/pages/diary.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
