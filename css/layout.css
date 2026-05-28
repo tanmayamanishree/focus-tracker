@@ -1,0 +1,111 @@
+/* ============================================
+   APP LAYOUT
+   ============================================ */
+
+.app {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  background: var(--bg-1);
+  border-right: 1px solid var(--line);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.brand {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  padding: 0 8px 24px;
+  color: var(--ink-0);
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.brand .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: inline-block;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--r-md);
+  color: var(--ink-1);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 13.5px;
+  user-select: none;
+}
+.nav-item:hover { background: var(--bg-2); color: var(--ink-0); }
+.nav-item.active {
+  background: var(--bg-3);
+  color: var(--ink-0);
+}
+.nav-item.active::before {
+  content: '';
+  width: 3px; height: 16px;
+  background: var(--accent);
+  margin-left: -12px;
+  margin-right: 9px;
+  border-radius: 2px;
+}
+.nav-item svg { width: 16px; height: 16px; opacity: 0.85; }
+
+.nav-spacer { flex: 1; }
+.nav-footer {
+  padding: 12px 8px;
+  font-size: 11px;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+}
+
+/* Page containers */
+.page {
+  overflow-y: auto;
+  height: 100vh;
+  display: none;
+}
+.page.active { display: block; }
+
+/* Page-specific shells */
+.focus-page {
+  background: radial-gradient(ellipse at center top, var(--bg-1), var(--bg-0) 60%);
+  padding: 48px 56px;
+  min-height: 100vh;
+}
+
+.projects-page {
+  display: grid;
+  grid-template-columns: 240px 280px 1fr;
+  height: 100vh;
+}
+.projects-page .col {
+  border-right: 1px solid var(--line);
+  overflow-y: auto;
+  padding: 24px 20px;
+  background: var(--bg-1);
+}
+.projects-page .col:last-child {
+  border-right: none;
+  background: var(--bg-0);
+  padding: 32px 40px;
+}
+
+.diary-page {
+  padding: 48px 64px;
+  max-width: 1000px;
+  margin: 0 auto;
+  background: var(--bg-0);
+}
