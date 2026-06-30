@@ -437,7 +437,8 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .pal-swatches i:last-child{border-radius:0 5px 5px 0}
 .pal-name{font-size:11px;color:var(--text-2)}
 .sound-controls{display:flex;align-items:center;gap:8px}
-.modal-foot{padding:var(--s4) var(--s6) var(--s6);border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+    .modal-foot{padding:var(--s4) var(--s6) var(--s6);border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:var(--s4)}
+    .foot-actions{display:flex;align-items:center;gap:var(--s3)}
 .foot-note{font-size:12px;color:var(--faint)}
 /* tag manager */
 .tag-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--s3)}
@@ -509,7 +510,7 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
   <div class="modal">
     <div class="modal-tabs" id="settingsTabs"></div>
     <div class="modal-body" id="settingsBody"></div>
-    <div class="modal-foot"><span class="foot-note">Changes save automatically</span><button class="btn danger" data-action="reset-data">Reset all data</button></div>
+      <div class="modal-foot"><button class="btn danger" data-action="reset-data">Reset all data</button><div class="foot-actions"><button class="btn" data-action="cancel-settings">Cancel</button><button class="btn-primary" data-action="save-settings">Save changes</button></div></div>
   </div>
 </div>
 
@@ -632,7 +633,8 @@ function findPTask(id){ const p=curProject(); return p&&(p.tasks||[]).find(t=>t.
 function openCount(p){ return (p.tasks||[]).filter(t=>!t.done).length; }
 
 /* ===== 4. THEME ===== */
-function applyTheme(){ document.documentElement.setAttribute('data-theme',S.settings.theme); document.documentElement.setAttribute('data-palette',S.settings.palette); }
+function applyThemeFrom(s){ document.documentElement.setAttribute('data-theme',s.theme); document.documentElement.setAttribute('data-palette',s.palette); }
+function applyTheme(){ applyThemeFrom(S.settings); }
 
 /* ===== 5. RENDER ===== */
 function render(){
@@ -1013,12 +1015,19 @@ function renderBlock(){
 }
 
 /* ===== 6. SETTINGS ===== */
-function openSettings(){ S.ui.settingsTab='appearance'; $('#settings').hidden=false; renderSettings(); }
-function closeSettings(){ $('#settings').hidden=true; }
+function openSettings(){ S.ui.settingsTab='appearance'; S.ui.settingsDraft=JSON.parse(JSON.stringify(S.settings)); $('#settings').hidden=false; renderSettings(); }
+function closeSettings(){ S.ui.settingsDraft=null; $('#settings').hidden=true; }
+function cancelSettings(){ if(S.ui.settingsDraft){ applyTheme(); } S.ui.settingsDraft=null; $('#settings').hidden=true; }
+function saveSettings(){ const d=S.ui.settingsDraft; if(!d){ $('#settings').hidden=true; return; }
+  const p=d.plan; p.dayStart=Math.max(0,Math.min(23,p.dayStart)); p.dayEnd=Math.max(p.dayStart+1,Math.min(24,p.dayEnd));
+  ['sessionMin','shortMin','longMin'].forEach(k=>{ if(isNaN(d.focus[k])||d.focus[k]<1) d.focus[k]=1; });
+  S.settings=d; S.ui.settingsDraft=null; applyTheme();
+  if(!S.focus.running){ S.focus.remaining=durSec(S.focus.mode); }
+  render(); scheduleSave(); $('#settings').hidden=true; toast('Settings saved'); }
 function renderSettings(){
   const tab=S.ui.settingsTab, tabs=['appearance','focus','plan','project'];
   $('#settingsTabs').innerHTML=tabs.map(t=>`<button class="tab ${tab===t?'active':''}" data-action="settings-tab" data-tab="${t}">${t[0].toUpperCase()+t.slice(1)}</button>`).join('')+`<button class="modal-close" data-action="close-settings">✕</button>`;
-  const st=S.settings; let h='';
+  const st=S.ui.settingsDraft||S.settings; let h='';
   if(tab==='appearance'){
     const pal=(id,cols,name)=>`<button class="pal ${st.palette===id?'active':''}" data-action="set-palette" data-palette="${id}"><span class="pal-swatches">${cols.map(c=>`<i style="background:${c}"></i>`).join('')}</span><span class="pal-name">${name}</span></button>`;
     h=`<div class="set-group"><h4>Color mode</h4>
@@ -1058,22 +1067,20 @@ function renderSettings(){
   $('#settingsBody').innerHTML=h;
 }
 function setSetting(path,val){
-  const parts=path.split('.'); let o=S.settings;
+  const tgt=S.ui.settingsDraft||S.settings;
+  const parts=path.split('.'); let o=tgt;
   for(let i=0;i<parts.length-1;i++) o=o[parts[i]];
   o[parts[parts.length-1]]=val;
-  if(path==='theme'){ S.settings.theme=val; applyTheme(); }
-  if(path==='palette'){ S.settings.palette=val; applyTheme(); }
-  if(['focus.sessionMin','focus.shortMin','focus.longMin'].includes(path)){ if(!S.focus.running){ S.focus.remaining=durSec(S.focus.mode); if(S.ui.view==='focus') render(); } }
-  if(path==='plan.dayStart'||path==='plan.dayEnd'){ const p=S.settings.plan; p.dayStart=Math.max(0,Math.min(23,p.dayStart)); p.dayEnd=Math.max(p.dayStart+1,Math.min(24,p.dayEnd)); if(S.ui.view==='plan') render(); }
-  scheduleSave();
+  if(path==='theme'||path==='palette'){ applyThemeFrom(tgt); }
+  if(path==='plan.dayStart'||path==='plan.dayEnd'){ const p=tgt.plan; p.dayStart=Math.max(0,Math.min(23,p.dayStart)); p.dayEnd=Math.max(p.dayStart+1,Math.min(24,p.dayEnd)); }
 }
 
 /* ===== 7. TIMER ===== */
 let actx=null;
 function ensureAudio(){ if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(actx&&actx.state==='suspended') actx.resume(); }
-function playSound(){
-  if(!S.settings.focus.notify) return; ensureAudio(); if(!actx) return;
-  const type=S.settings.focus.sound, now=actx.currentTime;
+function playSound(opts){
+  if(!(opts&&opts.force)&&!S.settings.focus.notify) return; ensureAudio(); if(!actx) return;
+  const type=(opts&&opts.sound)||S.settings.focus.sound, now=actx.currentTime;
   const notes=type==='chime'?[660,880]:type==='bell'?[880]:type==='soft'?[440]:[523,659,784];
   const wave=type==='marimba'?'triangle':'sine', dur=type==='bell'?0.9:0.32, gap=type==='marimba'?0.12:0.16;
   notes.forEach((fr,i)=>{ const o=actx.createOscillator(), g=actx.createGain(), t0=now+i*gap; o.type=wave; o.frequency.value=fr;
@@ -1176,14 +1183,16 @@ document.addEventListener('click',e=>{
     case 'toggle-sidebar': S.ui.collapsed=!S.ui.collapsed; $('#app').classList.toggle('collapsed',S.ui.collapsed); scheduleSave(); break;
     case 'nav': S.ui.view=el.dataset.view; render(); scheduleSave(); break;
     case 'open-settings': openSettings(); break;
-    case 'close-settings': closeSettings(); break;
+    case 'close-settings': cancelSettings(); break;
+    case 'cancel-settings': cancelSettings(); break;
+    case 'save-settings': saveSettings(); break;
     case 'open-about': $('#about').hidden=false; break;
     case 'close-about': $('#about').hidden=true; break;
     case 'settings-tab': S.ui.settingsTab=el.dataset.tab; renderSettings(); break;
     case 'set-theme': setSetting('theme',el.dataset.theme); renderSettings(); break;
     case 'set-palette': setSetting('palette',el.dataset.palette); renderSettings(); break;
-    case 'toggle-set':{ const p=el.dataset.set.split('.'); S.settings[p[0]][p[1]]=!S.settings[p[0]][p[1]]; renderSettings(); scheduleSave(); break; }
-    case 'test-sound': ensureAudio(); { const n=S.settings.focus.notify; S.settings.focus.notify=true; playSound(); S.settings.focus.notify=n; } break;
+    case 'toggle-set':{ const tgt=S.ui.settingsDraft||S.settings; const p=el.dataset.set.split('.'); tgt[p[0]][p[1]]=!tgt[p[0]][p[1]]; renderSettings(); break; }
+    case 'test-sound': ensureAudio(); playSound({force:true,sound:(S.ui.settingsDraft||S.settings).focus.sound}); break;
     case 'reset-data': if(confirm('Reset all Cadence data? This clears tasks, projects, tags, timer state, and settings.')){ Store.clear().then(()=>{ S=seed(defaultState()); applyTheme(); closeSettings(); render(); toast('Reset to a clean slate'); }); } break;
     /* tag manager */
     case 'toggle-tagform': S.ui.tagFormOpen=!S.ui.tagFormOpen; renderSettings(); break;
@@ -1303,7 +1312,7 @@ document.addEventListener('change',e=>{
   else if(t.dataset.edit==='tagdraft-priority'){ S.ui.tagDraft.priority=t.value; }
 });
 
-$('#settings').addEventListener('click',e=>{ if(e.target.id==='settings') closeSettings(); });
+  $('#settings').addEventListener('click',e=>{ if(e.target.id==='settings') cancelSettings(); });
 $('#about').addEventListener('click',e=>{ if(e.target.id==='about') $('#about').hidden=true; });
 $('#block').addEventListener('click',e=>{ if(e.target.id==='block') closeBlock(); });
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeMenu(); closeSettings(); $('#about').hidden=true; closeBlock(); } });
