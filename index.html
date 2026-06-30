@@ -1057,7 +1057,7 @@ function renderSettings(){
     const ps=st.plan;
     const PRESETS=[
       {label:'Full day',sub:'12 AM – 12 AM',start:0,end:24},
-      {label:'First shift',sub:'8 AM – 9 PM',start:8,end:21},
+      {label:'First shift',sub:'8 AM – 5 PM',start:8,end:17},
       {label:'Second shift',sub:'12 PM – 12 AM',start:12,end:24}];
     const presetBtns=PRESETS.map(p=>{ const active=ps.dayStart===p.start&&ps.dayEnd===p.end;
       return `<button class="preset-btn ${active?'active':''}" data-action="plan-preset" data-start="${p.start}" data-end="${p.end}"><span class="preset-lab">${p.label}</span><span class="preset-sub">${p.sub}</span></button>`; }).join('');
