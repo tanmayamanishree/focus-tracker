@@ -410,7 +410,14 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .set-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid var(--border)}
 .set-row:last-child{border:none}
 .set-row .lab{font-size:14.5px;color:var(--text)}
-.set-row .sub{font-size:12px;color:var(--muted);margin-top:2px}
+    .set-row .sub{font-size:12px;color:var(--muted);margin-top:2px}
+    .preset-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:4px 0 2px}
+    .preset-btn{display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:12px 14px;border-radius:var(--r-md);border:1px solid var(--border);background:var(--inset);transition:.18s var(--ease);text-align:left}
+    .preset-btn:hover{border-color:var(--accent)}
+    .preset-btn.active{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--surface))}
+    .preset-lab{font-size:14px;font-weight:600;color:var(--text)}
+    .preset-sub{font-size:11.5px;font-family:var(--font-mono);color:var(--muted)}
+    .preset-btn.active .preset-sub{color:var(--accent)}
     .seg{position:relative;display:inline-flex;background:var(--inset);border:1px solid var(--border);border-radius:var(--r-md);padding:3px}
     .seg::before{content:"";position:absolute;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);border-radius:8px;background:var(--accent);transition:transform .34s cubic-bezier(.34,1.56,.64,1)}
     .seg.is-2::before{transform:translateX(100%)}
@@ -1048,9 +1055,19 @@ function renderSettings(){
         <div class="set-row"><div class="lab">Notification sound</div><div class="sound-controls"><select class="sel-in" data-set="focus.sound">${['chime','bell','soft','marimba'].map(s=>`<option value="${s}" ${fs.sound===s?'selected':''}>${s[0].toUpperCase()+s.slice(1)}</option>`).join('')}</select><button class="btn" data-action="test-sound">Test</button></div></div></div>`;
   } else if(tab==='plan'){
     const ps=st.plan;
-    h=`<div class="set-group"><h4>Day range</h4>
-        <div class="set-row"><div class="lab">Day starts</div><div><input class="num-in" type="number" min="0" max="22" data-set="plan.dayStart" value="${ps.dayStart}"><span class="unit">:00</span></div></div>
-        <div class="set-row"><div class="lab">Day ends</div><div><input class="num-in" type="number" min="1" max="24" data-set="plan.dayEnd" value="${ps.dayEnd}"><span class="unit">:00</span></div></div></div>
+    const PRESETS=[
+      {label:'Full day',sub:'12 AM – 12 AM',start:0,end:24},
+      {label:'First shift',sub:'8 AM – 9 PM',start:8,end:21},
+      {label:'Second shift',sub:'12 PM – 12 AM',start:12,end:24}];
+    const presetBtns=PRESETS.map(p=>{ const active=ps.dayStart===p.start&&ps.dayEnd===p.end;
+      return `<button class="preset-btn ${active?'active':''}" data-action="plan-preset" data-start="${p.start}" data-end="${p.end}"><span class="preset-lab">${p.label}</span><span class="preset-sub">${p.sub}</span></button>`; }).join('');
+    const startOpts=[]; for(let i=0;i<=23;i++) startOpts.push(`<option value="${i}" ${ps.dayStart===i?'selected':''}>${fmtHour(i)}</option>`);
+    const endOpts=[]; for(let i=1;i<=24;i++) endOpts.push(`<option value="${i}" ${ps.dayEnd===i?'selected':''}>${i===24?'12 AM (next day)':fmtHour(i)}</option>`);
+    h=`<div class="set-group"><h4>Presets</h4>
+        <div class="preset-grid">${presetBtns}</div></div>
+      <div class="set-group"><h4>Custom range</h4>
+        <div class="set-row"><div class="lab">Day starts</div><select class="sel-in" data-set="plan.dayStart">${startOpts.join('')}</select></div>
+        <div class="set-row"><div class="lab">Day ends</div><select class="sel-in" data-set="plan.dayEnd">${endOpts.join('')}</select></div></div>
       <p class="ph-sub" style="margin-top:var(--s4)">Sets the visible hours on your Plan timetable. Blocks outside the range stay saved.</p>`;
   } else if(tab==='project'){
     const tagList=(S.tags||[]).length?S.tags.map(tg=>`<div class="tag-item"><span class="tag-dot" style="background:${tg.color}"></span><span class="tag-name">${esc(tg.name)}</span><span class="tag-prio">${esc(tg.priority||'')}</span><button class="del-x" data-action="del-tag" data-id="${tg.id}">×</button></div>`).join(''):'<div class="muted-note">No tags yet — add one below.</div>';
@@ -1191,6 +1208,7 @@ document.addEventListener('click',e=>{
     case 'settings-tab': S.ui.settingsTab=el.dataset.tab; renderSettings(); break;
     case 'set-theme': setSetting('theme',el.dataset.theme); renderSettings(); break;
     case 'set-palette': setSetting('palette',el.dataset.palette); renderSettings(); break;
+    case 'plan-preset':{ const tgt=S.ui.settingsDraft||S.settings; tgt.plan.dayStart=parseInt(el.dataset.start,10); tgt.plan.dayEnd=parseInt(el.dataset.end,10); renderSettings(); break; }
     case 'toggle-set':{ const tgt=S.ui.settingsDraft||S.settings; const p=el.dataset.set.split('.'); tgt[p[0]][p[1]]=!tgt[p[0]][p[1]]; renderSettings(); break; }
     case 'test-sound': ensureAudio(); playSound({force:true,sound:(S.ui.settingsDraft||S.settings).focus.sound}); break;
     case 'reset-data': if(confirm('Reset all Cadence data? This clears tasks, projects, tags, timer state, and settings.')){ Store.clear().then(()=>{ S=seed(defaultState()); applyTheme(); closeSettings(); render(); toast('Reset to a clean slate'); }); } break;
@@ -1307,7 +1325,7 @@ document.addEventListener('focusout',e=>{
 
 document.addEventListener('change',e=>{
   const t=e.target; if(!t.dataset) return;
-  if(t.dataset.set){ if(t.type==='number'){ let v=parseInt(t.value,10); if(isNaN(v)||v<1) v=1; setSetting(t.dataset.set,v); } else setSetting(t.dataset.set,t.value); }
+  if(t.dataset.set){ if(t.type==='number'){ let v=parseInt(t.value,10); if(isNaN(v)||v<1) v=1; setSetting(t.dataset.set,v); } else if(t.dataset.set==='plan.dayStart'||t.dataset.set==='plan.dayEnd'){ setSetting(t.dataset.set,parseInt(t.value,10)); renderSettings(); } else setSetting(t.dataset.set,t.value); }
   else if(t.dataset.edit==='proj-tag-select'){ const p=S.projects.find(x=>x.id===t.dataset.id); if(p){ p.tagId=t.value||null; render(); scheduleSave(); } }
   else if(t.dataset.edit==='tagdraft-priority'){ S.ui.tagDraft.priority=t.value; }
 });
