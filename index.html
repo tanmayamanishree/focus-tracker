@@ -699,7 +699,7 @@ function immRow(t){
     </div>${subList?`<div class="subtasks">${subList}</div>`:''}${subs.length<4?`<input class="sub-add" data-add="imsub" data-id="${t.id}" placeholder="+ add subtask">`:''}</li>`;
 }
 function paintRing(){ const c=$('#ringProg'); if(!c) return; const r=128, circ=2*Math.PI*r, total=durSec(S.focus.mode);
-  const frac=total>0?Math.max(0,Math.min(1,S.focus.remaining/total)):0; c.style.strokeDasharray=circ; c.style.strokeDashoffset=circ*(1-frac); }
+  const elapsed=total-S.focus.remaining; const frac=total>0?Math.max(0,Math.min(1,elapsed/total)):0; c.style.strokeDasharray=circ; c.style.strokeDashoffset=circ*(1-frac); }
 function liveTick(){ if(S.ui.view!=='focus') return; const t=$('#ringTime'); if(t) t.textContent=fmtTime(S.focus.remaining); paintRing(); }
 
 /* ----- STATISTICS ----- */
