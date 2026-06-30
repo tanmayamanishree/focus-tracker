@@ -48,22 +48,28 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 
 /* ===================== SHELL ===================== */
 .app{display:flex;height:100vh;overflow:hidden}
-.sidebar{width:248px;flex:0 0 248px;background:var(--surface-2);border-right:1px solid var(--border);padding:var(--s6) var(--s5) var(--s5);display:flex;flex-direction:column;position:relative;transition:margin-left .3s var(--ease)}
-.app.collapsed .sidebar{margin-left:-248px}
-.brand{font-family:var(--font-display);font-size:38px;line-height:1;letter-spacing:-.01em;color:var(--text);margin-bottom:var(--s7);font-weight:400}
-.collapse-btn,.reopen-btn{position:absolute;top:var(--s6);width:30px;height:30px;border-radius:var(--r-sm);background:var(--surface-2);border:1px solid var(--border-2);color:var(--muted);display:grid;place-items:center;font-size:17px;transition:.2s var(--ease);z-index:30}
-.collapse-btn{right:-15px}
-.collapse-btn:hover,.reopen-btn:hover{color:var(--accent);border-color:var(--accent)}
-.reopen-btn{left:12px;display:none;background:var(--surface)}
-.app.collapsed .collapse-btn{display:none}
-.app.collapsed .reopen-btn{display:grid}
-.nav{display:flex;flex-direction:column;gap:var(--s1);flex:1}
-.nav-item{font-size:20px;color:var(--muted);padding:6px 0;width:fit-content;position:relative;transition:color .2s var(--ease);text-align:left}
-.nav-item:hover{color:var(--text-2)}
-.nav-item.active{color:var(--text)}
-.nav-item.active::after{content:"";position:absolute;left:0;bottom:2px;width:100%;height:2px;background:var(--accent);border-radius:2px}
-.sidebar-foot{margin-top:auto;display:flex;flex-direction:column;gap:var(--s1)}
-.foot-item{font-size:19px}
+    .sidebar{width:248px;flex:0 0 248px;background:var(--surface-2);border-right:1px solid var(--border);padding:var(--s6) var(--s5) var(--s5);display:flex;flex-direction:column;position:relative;transition:width .32s var(--ease),flex-basis .32s var(--ease),padding .32s var(--ease)}
+    .app.collapsed .sidebar{width:76px;flex-basis:76px;padding-left:14px;padding-right:14px}
+    .brand{display:flex;align-items:center;gap:10px;margin-bottom:var(--s7);min-height:40px}
+    .brand-logo{flex:0 0 34px;width:34px;height:34px;display:block}
+    .brand-text{font-family:var(--font-display);font-size:38px;line-height:1;letter-spacing:-.01em;color:var(--text);font-weight:400;white-space:nowrap;display:inline-block;overflow:hidden;max-width:200px;transition:opacity .22s var(--ease),max-width .32s var(--ease)}
+    .app.collapsed .brand{justify-content:center;gap:0}
+    .app.collapsed .brand-text{opacity:0;max-width:0}
+    .collapse-btn{position:absolute;top:var(--s6);right:-15px;width:30px;height:30px;border-radius:var(--r-sm);background:var(--surface-2);border:1px solid var(--border-2);color:var(--muted);display:grid;place-items:center;font-size:17px;transition:transform .32s var(--ease),color .2s var(--ease),border-color .2s var(--ease);z-index:30}
+    .collapse-btn:hover{color:var(--accent);border-color:var(--accent)}
+    .app.collapsed .collapse-btn{transform:rotate(180deg)}
+    .nav{display:flex;flex-direction:column;gap:4px;flex:1}
+    .nav-item{display:flex;align-items:center;gap:13px;font-size:20px;color:var(--muted);padding:9px 11px;border-radius:var(--r-md);width:100%;position:relative;transition:color .2s var(--ease),background .2s var(--ease),padding .32s var(--ease);text-align:left;white-space:nowrap}
+    .nav-ic{flex:0 0 22px;width:22px;height:22px;display:block;color:inherit}
+    .nav-ic svg{width:22px;height:22px;display:block}
+    .nav-label{display:inline-block;overflow:hidden;max-width:160px;transition:opacity .22s var(--ease),max-width .32s var(--ease)}
+    .nav-item:hover{color:var(--text-2);background:var(--inset)}
+    .nav-item.active{color:var(--text);background:var(--inset)}
+    .nav-item.active .nav-ic{color:var(--accent)}
+    .app.collapsed .nav-item{justify-content:center;padding:11px 0;gap:0}
+    .app.collapsed .nav-label{opacity:0;max-width:0}
+    .sidebar-foot{margin-top:auto;display:flex;flex-direction:column;gap:4px}
+    .foot-item{font-size:19px}
 .main{flex:1;overflow-y:auto;overflow-x:hidden;position:relative}
 .view{padding:var(--s7) var(--s8);max-width:1100px;margin:0 auto;min-height:100%}
 @media(max-width:1100px){.view{padding:var(--s6) var(--s5)}}
@@ -204,9 +210,11 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .badge.earned .badge-hint{color:var(--accent);font-weight:600}
 
 /* ===================== TO-DOS ===================== */
-.view-toggle{display:inline-flex;background:var(--text);border-radius:var(--r-pill);padding:4px;gap:2px}
-.view-toggle button{padding:8px 22px;border-radius:var(--r-pill);font-size:14px;font-weight:600;color:var(--bg);transition:.15s var(--ease)}
-.view-toggle button.active{background:var(--accent);color:var(--on-accent)}
+    .view-toggle{position:relative;display:inline-flex;background:var(--text);border-radius:var(--r-pill);padding:4px}
+    .view-toggle::before{content:"";position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:var(--r-pill);background:var(--accent);transition:transform .34s cubic-bezier(.34,1.56,.64,1)}
+    .view-toggle.is-list::before{transform:translateX(100%)}
+    .view-toggle button{position:relative;z-index:1;flex:1;min-width:92px;text-align:center;padding:8px 22px;border-radius:var(--r-pill);font-size:14px;font-weight:600;color:var(--bg);transition:color .28s var(--ease)}
+    .view-toggle button.active{color:var(--on-accent)}
 .todo-actions{display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--s5);gap:var(--s4);flex-wrap:wrap}
 .todo-actions-right{display:flex;gap:var(--s3)}
 .proj-list{display:flex;flex-direction:column;gap:var(--s2)}
@@ -245,8 +253,9 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .tag-chip-left{display:inline-flex;align-items:center;gap:9px}
 .tag-chip-dot{width:11px;height:11px;border-radius:50%;flex:0 0 11px}
 .tag-chip .chev{width:15px;height:15px;color:var(--muted);flex:0 0 15px}
-.tag-add-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--border-2);background:var(--surface-2);color:var(--text-2);font-size:18px;display:grid;place-items:center;transition:.18s var(--ease);flex:0 0 34px}
-.tag-add-btn:hover{border-color:var(--accent);color:var(--accent)}
+    .tag-add-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--border-2);background:var(--surface-2);color:var(--text-2);font-size:20px;line-height:1;padding:0;display:flex;align-items:center;justify-content:center;transition:.18s var(--ease);flex:0 0 34px}
+    .tag-add-btn svg{width:16px;height:16px;display:block}
+    .tag-add-btn:hover{border-color:var(--accent);color:var(--accent)}
 .menu-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;vertical-align:middle}
 .todo-detail{display:block}
 .todo-detail.split{display:grid;grid-template-columns:1fr 1fr;gap:var(--s5);align-items:start}
@@ -402,18 +411,22 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 .set-row:last-child{border:none}
 .set-row .lab{font-size:14.5px;color:var(--text)}
 .set-row .sub{font-size:12px;color:var(--muted);margin-top:2px}
-.seg{display:inline-flex;background:var(--inset);border:1px solid var(--border);border-radius:var(--r-md);padding:3px}
-.seg button{padding:6px 16px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);transition:.15s var(--ease)}
-.seg button.active{background:var(--accent);color:var(--on-accent)}
+    .seg{position:relative;display:inline-flex;background:var(--inset);border:1px solid var(--border);border-radius:var(--r-md);padding:3px}
+    .seg::before{content:"";position:absolute;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);border-radius:8px;background:var(--accent);transition:transform .34s cubic-bezier(.34,1.56,.64,1)}
+    .seg.is-2::before{transform:translateX(100%)}
+    .seg button{position:relative;z-index:1;flex:1;min-width:74px;text-align:center;padding:6px 16px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);transition:color .28s var(--ease)}
+    .seg button.active{color:var(--on-accent)}
 .num-in{width:64px;background:var(--inset);border:1px solid var(--border);border-radius:var(--r-sm);padding:7px 10px;font-family:var(--font-mono);font-size:14px;text-align:center;color:var(--text)}
 .num-in:focus{outline:none;border-color:var(--accent)}
 .unit{font-family:var(--font-mono);font-size:12px;color:var(--muted);margin-left:6px}
 .sel-in{background:var(--inset);border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 12px;font-size:13.5px;color:var(--text);min-width:130px}
 .sel-in:focus{outline:none;border-color:var(--accent)}
-.switch{width:44px;height:25px;border-radius:99px;background:var(--border-2);position:relative;transition:.2s var(--ease);flex:0 0 44px;cursor:pointer}
-.switch.on{background:var(--accent)}
-.switch::after{content:"";position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:#fff;transition:.2s var(--ease);box-shadow:0 1px 3px rgba(0,0,0,.2)}
-.switch.on::after{transform:translateX(19px)}
+    .switch{width:44px;height:25px;border-radius:99px;background:var(--border-2);position:relative;transition:background .25s var(--ease);flex:0 0 44px;cursor:pointer}
+    .switch.on{background:var(--accent)}
+    .switch::after{content:"";position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:#fff;transition:transform .34s cubic-bezier(.34,1.56,.64,1),width .2s var(--ease);box-shadow:0 1px 3px rgba(0,0,0,.2)}
+    .switch:active::after{width:23px}
+    .switch.on::after{transform:translateX(19px)}
+    .switch.on:active::after{transform:translateX(15px)}
 .palettes{display:flex;gap:14px;flex-wrap:wrap;margin-top:6px}
 .pal{display:flex;flex-direction:column;align-items:center;gap:7px;padding:6px;border-radius:var(--r-md);border:1.5px solid transparent;transition:.18s var(--ease)}
 .pal:hover{border-color:var(--border-2)}
@@ -470,21 +483,25 @@ input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
 <body>
 <div class="app" id="app">
   <aside class="sidebar" id="sidebar">
-    <button class="collapse-btn" data-action="toggle-sidebar" aria-label="Collapse">‹</button>
-    <div class="brand">Cadence</div>
+    <button class="collapse-btn" data-action="toggle-sidebar" aria-label="Toggle sidebar">‹</button>
+    <div class="brand">
+      <svg class="brand-logo" viewBox="0 0 324 324" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M52.7376 197.7L137.848 198.507C138.867 198.526 139.864 198.804 140.746 199.313C141.628 199.822 142.367 200.547 142.893 201.42L186.147 274.724C186.812 275.833 187.82 276.695 189.019 277.18C190.218 277.665 191.542 277.746 192.791 277.412C194.04 277.077 195.145 276.345 195.941 275.325C196.737 274.306 197.178 273.055 197.2 271.762L198.007 186.652C198.026 185.633 198.304 184.636 198.813 183.754C199.322 182.872 200.047 182.133 200.919 181.607L274.224 138.353C275.333 137.688 276.195 136.68 276.68 135.481C277.165 134.283 277.246 132.959 276.912 131.71C276.577 130.461 275.845 129.355 274.825 128.559C273.806 127.764 272.555 127.322 271.262 127.3L186.152 126.493C185.133 126.474 184.136 126.196 183.254 125.687C182.372 125.178 181.633 124.453 181.107 123.581L137.853 50.2763C137.188 49.1673 136.18 48.305 134.981 47.82C133.783 47.3351 132.459 47.2538 131.21 47.5884C129.961 47.9231 128.855 48.6555 128.059 49.6748C127.264 50.6941 126.822 51.9449 126.8 53.2377L125.993 138.348C125.974 139.367 125.696 140.364 125.187 141.246C124.678 142.128 123.953 142.867 123.081 143.393L49.7762 186.648C48.6672 187.312 47.805 188.32 47.32 189.519C46.835 190.718 46.7537 192.042 47.0883 193.291C47.423 194.54 48.1554 195.646 49.1747 196.441C50.1941 197.237 51.4448 197.678 52.7376 197.7Z" fill="var(--accent)" stroke="var(--accent-2)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="brand-text">Cadence</span>
+    </div>
     <nav class="nav">
-      <button class="nav-item" data-action="nav" data-view="focus">Focus</button>
-      <button class="nav-item" data-action="nav" data-view="plan">Plan</button>
-      <button class="nav-item" data-action="nav" data-view="statistics">Statistics</button>
-      <button class="nav-item" data-action="nav" data-view="projects">To-dos</button>
-      <button class="nav-item" data-action="nav" data-view="diary">Weekly Diary</button>
+      <button class="nav-item" data-action="nav" data-view="focus"><span class="nav-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 1.5M9 2h6"/></svg></span><span class="nav-label">Focus</span></button>
+      <button class="nav-item" data-action="nav" data-view="plan"><span class="nav-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg></span><span class="nav-label">Plan</span></button>
+      <button class="nav-item" data-action="nav" data-view="statistics"><span class="nav-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M6.5 21v-7M12 21V8M17.5 21v-4"/></svg></span><span class="nav-label">Statistics</span></button>
+      <button class="nav-item" data-action="nav" data-view="projects"><span class="nav-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l2.5 2.5L21 4"/><path d="M20.5 12v7a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 19V5A1.5 1.5 0 0 1 5 3.5h10"/></svg></span><span class="nav-label">To-dos</span></button>
+      <button class="nav-item" data-action="nav" data-view="diary"><span class="nav-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5c-1.6-1-4.2-1.6-6.3-1.6C4 4.9 3 5.2 3 5.2v13.4s1.2-.4 2.7-.4c2.1 0 4.7.6 6.3 1.6"/><path d="M12 6.5c1.6-1 4.2-1.6 6.3-1.6 1.7 0 2.7.3 2.7.3v13.4s-1.2-.4-2.7-.4c-2.1 0-4.7.6-6.3 1.6"/><path d="M12 6.5v13.4"/></svg></span><span class="nav-label">Weekly Diary</span></button>
     </nav>
     <div class="sidebar-foot">
-      <button class="nav-item foot-item" data-action="open-about">About</button>
-      <button class="nav-item foot-item" data-action="open-settings">Settings</button>
+      <button class="nav-item foot-item" data-action="open-about"><span class="nav-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.8" r=".6" fill="currentColor" stroke="none"/></svg></span><span class="nav-label">About</span></button>
+      <button class="nav-item foot-item" data-action="open-settings"><span class="nav-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h7M15 17h5"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="13" cy="17" r="2"/></svg></span><span class="nav-label">Settings</span></button>
     </div>
   </aside>
-  <button class="reopen-btn" data-action="toggle-sidebar" aria-label="Open">›</button>
   <main class="main" id="main"></main>
 </div>
 
@@ -793,7 +810,7 @@ function viewProjects(){
   <div class="view">
     <div class="topbar">
       <span class="page-title">To-dos</span>
-      <div class="view-toggle">
+      <div class="view-toggle ${layout==='list'?'is-list':''}">
         <button class="${layout==='gallery'?'active':''}" data-action="proj-layout" data-layout="gallery">Gallery</button>
         <button class="${layout==='list'?'active':''}" data-action="proj-layout" data-layout="list">List</button>
       </div>
@@ -854,7 +871,7 @@ function projectDetail(){
     <div class="tag-row">
       <span class="overline">Tag</span>
       ${chip}
-      <button class="tag-add-btn" data-action="quick-add-tag" title="Create a new tag">+</button>
+        <button class="tag-add-btn" data-action="quick-add-tag" title="Create a new tag" aria-label="Create a new tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
     </div>
     <div class="todo-detail ${split?'split':''}">
       <div class="td-left">${tasksCard}${pnotesCard}</div>
@@ -1006,7 +1023,7 @@ function renderSettings(){
     const pal=(id,cols,name)=>`<button class="pal ${st.palette===id?'active':''}" data-action="set-palette" data-palette="${id}"><span class="pal-swatches">${cols.map(c=>`<i style="background:${c}"></i>`).join('')}</span><span class="pal-name">${name}</span></button>`;
     h=`<div class="set-group"><h4>Color mode</h4>
         <div class="set-row"><div><div class="lab">Theme</div><div class="sub">Paper light or Night dark.</div></div>
-          <div class="seg"><button class="${st.theme==='light'?'active':''}" data-action="set-theme" data-theme="light">Light</button><button class="${st.theme==='dark'?'active':''}" data-action="set-theme" data-theme="dark">Dark</button></div></div></div>
+          <div class="seg ${st.theme==='dark'?'is-2':''}"><button class="${st.theme==='light'?'active':''}" data-action="set-theme" data-theme="light">Light</button><button class="${st.theme==='dark'?'active':''}" data-action="set-theme" data-theme="dark">Dark</button></div></div></div>
       <div class="set-group"><h4>Color palette</h4><div class="palettes">
         ${pal('salmon',['#F7E3E0','#E8A39A','#D97D6E','#CB5F4C'],'Salmon')}${pal('amber',['#FBEACD','#F5D499','#EFB860','#E2902F'],'Amber')}${pal('rose',['#F7E4E9','#EFC2CE','#E095A7','#CE6F86'],'Rose')}${pal('ink',['#E8E4DC','#8C7E6A','#5E5142','#3A3329'],'Ink')}</div></div>`;
   } else if(tab==='focus'){
@@ -1078,7 +1095,7 @@ function completeSession(){
   const wasFocus=S.focus.mode==='focus'; S.focus.running=false; let next, auto;
   if(wasFocus){ addFocusMinutes(S.settings.focus.sessionMin); recordPomodoro(); S.stats.coins+=10; S.stats.sessions=(S.stats.sessions||0)+1; S.focus.starsInSet++;
     if(S.focus.starsInSet>=4){ next='long'; S.stats.coins+=20; } else next='short'; auto=S.settings.focus.autoStartBreaks;
-    toast(next==='long'?'Set complete — enjoy a long break':'Focus done — short break');
+    toast(next==='long'?'Set complete — enjoy a long break':'Focus done ��� short break');
   } else { next='focus'; auto=S.settings.focus.autoStartFocus; toast('Break over — back to focus'); }
   playSound(); S.focus.mode=next;
   if(next==='focus'&&S.focus.starsInSet>=4){ S.focus.starsInSet=0; S.focus.setCount++; }
